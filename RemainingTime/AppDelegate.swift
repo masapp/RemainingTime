@@ -8,15 +8,35 @@
 
 import UIKit
 
+@available(iOS 8.0, *)
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var isAlert: Bool?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        if ((UIDevice.currentDevice().systemVersion as NSString).floatValue >= 8.0) {
+            application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert, categories: nil))
+        } else {
+            application.registerForRemoteNotificationTypes(UIRemoteNotificationType.Alert)
+        }
+        
         return true
+    }
+    
+    func application(application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
+        
+        let allowedType = notificationSettings.types
+        switch allowedType {
+        case UIUserNotificationType.None:
+            isAlert = false
+        default:
+            isAlert = true
+        }
+        
     }
 
     func applicationWillResignActive(application: UIApplication) {
@@ -40,7 +60,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
-
